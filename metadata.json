@@ -1,0 +1,7 @@
+{
+  "name": "RM_NET Cashier",
+  "description": "A polished cashier application for retail stores with AI-powered related item suggestions.",
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

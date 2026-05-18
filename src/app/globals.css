@@ -1,0 +1,200 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Removed direct body font-family to let Tailwind handle it via font-body class */
+/*
+body {
+  font-family: 'Inter', Arial, Helvetica, sans-serif;
+}
+*/
+
+@layer base {
+  :root {
+    --background: 220 40% 98%; /* Very Light Cool Gray */
+    --foreground: 230 30% 15%; /* Dark Desaturated Indigo */
+    --card: 0 0% 100%; /* White */
+    --card-foreground: 230 30% 15%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 230 30% 15%;
+    --primary: 190 85% 48%; /* Electric Cyan (adjusted for light mode) */
+    --primary-foreground: 0 0% 100%; /* White text on primary */
+    --secondary: 220 30% 94%; /* Light Cool Gray */
+    --secondary-foreground: 230 25% 35%; /* Medium Dark Indigo */
+    --muted: 220 30% 94%;
+    --muted-foreground: 230 20% 50%; /* Medium Gray Indigo */
+    --accent: 275 75% 55%; /* Vibrant Purple (adjusted for light mode) */
+    --accent-foreground: 0 0% 100%; /* White text on accent */
+    --destructive: 0 70% 55%; /* Standard Red - kept */
+    --destructive-foreground: 0 0% 100%; /* Standard White - kept */
+    --border: 220 25% 90%; /* Very Subtle Cool Gray Border */
+    --input: 0 0% 100%; /* White input background */
+    --input-border: 220 20% 75%; /* Light Gray Input Border */
+    --ring: 190 85% 48%; /* Primary for focus rings */
+    --radius: 0.5rem; /* Kept */
+
+    --chart-1: 190 90% 55%; /* Electric Cyan */
+    --chart-2: 275 80% 60%; /* Vibrant Purple */
+    --chart-3: 160 70% 45%; /* Teal */
+    --chart-4: 30 90% 60%;  /* Orange */
+    --chart-5: 210 80% 65%; /* Sky Blue */
+
+    /* Light Sidebar specific colors */
+    --sidebar-background: 220 35% 96%;
+    --sidebar-foreground: 230 30% 20%;
+    --sidebar-primary: 190 85% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 25% 92%;
+    --sidebar-accent-foreground: 230 30% 15%;
+    --sidebar-border: 220 25% 90%;
+    --sidebar-ring: 190 85% 48%;
+  }
+
+  .dark {
+    --background: 230 25% 12%; /* Deep Indigo */
+    --foreground: 210 40% 95%; /* Pale Cyan Blue */
+    --card: 230 25% 18%; /* Slightly Lighter Indigo */
+    --card-foreground: 210 40% 95%;
+    --popover: 230 25% 16%; /* Darker Popover */
+    --popover-foreground: 210 40% 95%;
+    --primary: 190 90% 55%; /* Electric Cyan */
+    --primary-foreground: 230 25% 10%; /* Deep Indigo for text on primary */
+    --secondary: 230 20% 25%; /* Muted Indigo */
+    --secondary-foreground: 210 30% 80%; /* Lighter Cyan Blue */
+    --muted: 230 20% 22%; /* Darker Muted Indigo */
+    --muted-foreground: 210 25% 65%; /* Medium Cyan Blue */
+    --accent: 275 80% 60%; /* Vibrant Purple */
+    --accent-foreground: 210 40% 95%; /* Pale Cyan Blue for text on accent */
+    --destructive: 0 70% 50%; /* Standard Red - kept */
+    --destructive-foreground: 0 0% 100%; /* Standard White - kept */
+    --border: 230 20% 30%; /* Subtle Indigo Border */
+    --input: 230 25% 20%; /* Input background */
+    --input-border: 230 20% 40%; /* Slightly Lighter Input Border */
+    --ring: 190 90% 55%; /* Electric Cyan for rings */
+
+    /* Dark Sidebar specific colors */
+    --sidebar-background: 230 25% 15%;
+    --sidebar-foreground: 210 40% 90%;
+    --sidebar-primary: 190 90% 55%;
+    --sidebar-primary-foreground: 230 25% 10%;
+    --sidebar-accent: 230 20% 28%;
+    --sidebar-accent-foreground: 210 40% 95%;
+    --sidebar-border: 230 20% 30%;
+    --sidebar-ring: 190 90% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  /* Custom input style to use --input-border */
+  input, textarea, select {
+     @apply border-input-border;
+  }
+}
+
+/* Hide arrows from number inputs globally (CartItem uses this) */
+.hide-arrows[type="number"] {
+  -moz-appearance: textfield;
+}
+.hide-arrows::-webkit-outer-spin-button,
+.hide-arrows::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Styles for the off-screen print container (used for html2canvas and direct print) */
+#print-container {
+  position: absolute;
+  left: -9999px; /* Keep off-screen for html2canvas */
+  top: -9999px;
+  background-color: white; /* Essential for html2canvas */
+  padding: 10px; /* Optional: some padding for canvas capture */
+  /* width: 320px; */ /* Optional: fixed width for canvas capture */
+  display: block; /* Must be block to have dimensions for html2canvas */
+}
+
+
+/* Print specific styles */
+@media print {
+  body.printing-active * {
+    visibility: hidden !important; /* Hide everything by default */
+  }
+
+  /* Make the print container and its necessary ancestors visible */
+  /* This path needs to be accurate for your DOM structure */
+  body.printing-active,
+  body.printing-active #__next,
+  body.printing-active #__next > div, /* Assuming this is a main wrapper inside #__next */
+  body.printing-active #__next > div > main, /* Assuming 'main' wraps your page content */
+  body.printing-active #print-container,
+  body.printing-active #print-container * {
+    visibility: visible !important;
+  }
+
+  /* Style the body for printing */
+  body.printing-active {
+    background: white !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    color: black !important; /* Ensure base text color is black */
+  }
+  
+  /* Ensure other elements at the same level as #print-container's ancestors are hidden */
+  body.printing-active #__next > div > *:not(main) { /* Example: Hide siblings of main like a header/footer inside #__next > div */
+    display: none !important;
+  }
+   body.printing-active #__next > div > main > *:not(#print-container) { /* Hide siblings of #print-container within main */
+    display: none !important;
+  }
+
+
+  /* Style the print container itself to take over the page */
+  body.printing-active #print-container {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important; /* Use 100% width of the print area */
+    height: auto !important; /* Adjust based on content */
+    padding: 10mm !important; /* Typical print margins */
+    margin: 0 !important;
+    background: white !important;
+    color: black !important;
+    box-shadow: none !important;
+    border: none !important;
+    font-size: 12pt; /* Readable print font size */
+    line-height: 1.3;
+  }
+
+  /* Ensure all nested elements within print-container are styled for print */
+  body.printing-active #print-container *,
+  body.printing-active #print-container *:before,
+  body.printing-active #print-container *:after {
+    background-color: transparent !important; /* Important for nested items */
+    color: black !important;
+    box-shadow: none !important;
+    border-color: black !important; /* Make borders black if they exist */
+    -webkit-print-color-adjust: exact !important; /* Force color printing for some elements if needed */
+    print-color-adjust: exact !important;
+  }
+
+  /* Remove any scrollbars when printing */
+  body.printing-active ::-webkit-scrollbar {
+    display: none !important;
+  }
+  body.printing-active * {
+    scrollbar-width: none !important; /* For Firefox */
+  }
+
+  @page {
+    size: auto; /* Or specify like A4, letter */
+    margin: 0mm; /* Margins are handled by #print-container padding */
+  }
+}
