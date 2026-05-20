@@ -32,7 +32,24 @@ export default function Cart({ cartItems, onUpdateQuantity, onRemoveItem, onConf
     try {
       const storedSettings = localStorage.getItem(PAYMENT_SETTINGS_STORAGE_KEY);
       if (storedSettings) {
-        setPaymentSettings(JSON.parse(storedSettings));
+        const parsed: PaymentSetting[] = JSON.parse(storedSettings);
+        // Merge missing defaults for existing users
+        const merged = [...parsed];
+        let hasNewDefaults = false;
+
+        DEFAULT_PAYMENT_SETTINGS.forEach(def => {
+          if (!merged.find(m => m.id === def.id)) {
+            merged.push(def);
+            hasNewDefaults = true;
+          }
+        });
+
+        if (hasNewDefaults) {
+          setPaymentSettings(merged);
+          localStorage.setItem(PAYMENT_SETTINGS_STORAGE_KEY, JSON.stringify(merged));
+        } else {
+          setPaymentSettings(parsed);
+        }
       } else {
         setPaymentSettings(DEFAULT_PAYMENT_SETTINGS);
       }
@@ -117,7 +134,7 @@ export default function Cart({ cartItems, onUpdateQuantity, onRemoveItem, onConf
 
   if (!mounted) {
     return (
-      <Card className="shadow-xl flex flex-col h-full">
+      <Card className="shadow-xl flex flex-col">
         <CardHeader className="border-b">
           <CardTitle className="flex items-center text-xl font-headline">
             <ShoppingCart className="mr-2 h-6 w-6 text-primary" />
@@ -132,7 +149,7 @@ export default function Cart({ cartItems, onUpdateQuantity, onRemoveItem, onConf
   }
 
   return (
-    <Card className="shadow-xl flex flex-col h-full">
+    <Card className="shadow-xl flex flex-col">
       <CardHeader className="border-b">
         <CardTitle className="flex items-center text-xl font-headline">
           <ShoppingCart className="mr-2 h-6 w-6 text-primary" />
@@ -147,7 +164,7 @@ export default function Cart({ cartItems, onUpdateQuantity, onRemoveItem, onConf
             <p className="text-sm">Silakan tambahkan produk.</p>
           </div>
         ) : (
-          <ScrollArea className="h-[calc(100%-0px)] sm:max-h-[40vh] md:max-h-full"> {/* Adjusted height */}
+          <ScrollArea className="max-h-[300px] sm:max-h-[400px] lg:max-h-[450px]">
             <div className="p-4 space-y-2">
               {cartItems.map(item => (
                 <CartItem
@@ -163,7 +180,7 @@ export default function Cart({ cartItems, onUpdateQuantity, onRemoveItem, onConf
       </CardContent>
       
       {cartItems.length > 0 && (
-        <CardFooter className="flex flex-col gap-3 p-4 border-t">
+        <CardFooter className="flex flex-col gap-2 p-3 border-t">
           <div className="w-full flex justify-between text-sm">
             <span>Subtotal:</span>
             <span className="font-medium">Rp {subtotal.toLocaleString('id-ID')}</span>
@@ -176,15 +193,15 @@ export default function Cart({ cartItems, onUpdateQuantity, onRemoveItem, onConf
           
           <Separator className="my-1" />
 
-          <div className="w-full space-y-3">
+          <div className="w-full space-y-2">
             <Label className="text-base font-medium">Metode Pembayaran</Label>
             <RadioGroup value={selectedMethod} onValueChange={(value) => setSelectedMethod(value as PaymentMethodType)} className="flex gap-3">
-              <Label htmlFor="cash-method" className="flex-1 flex items-center space-x-2 p-3 border rounded-md hover:bg-secondary/50 cursor-pointer has-[:checked]:bg-accent/20 has-[:checked]:border-accent transition-colors">
+              <Label htmlFor="cash-method" className="flex-1 flex items-center space-x-2 p-2 border rounded-md hover:bg-secondary/50 cursor-pointer has-[:checked]:bg-accent/20 has-[:checked]:border-accent transition-colors">
                 <RadioGroupItem value="cash" id="cash-method" />
                 <DollarSign className="h-5 w-5 text-green-600" />
                 <span>Tunai</span>
               </Label>
-              <Label htmlFor="transfer-method" className="flex-1 flex items-center space-x-2 p-3 border rounded-md hover:bg-secondary/50 cursor-pointer has-[:checked]:bg-accent/20 has-[:checked]:border-accent transition-colors">
+              <Label htmlFor="transfer-method" className="flex-1 flex items-center space-x-2 p-2 border rounded-md hover:bg-secondary/50 cursor-pointer has-[:checked]:bg-accent/20 has-[:checked]:border-accent transition-colors">
                 <RadioGroupItem value="transfer" id="transfer-method" />
                 <ArrowRightLeft className="h-5 w-5 text-purple-600" />
                 <span>Transfer</span>

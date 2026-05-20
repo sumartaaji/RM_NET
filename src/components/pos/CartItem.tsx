@@ -83,7 +83,7 @@ export default function CartItem({ item, onUpdateQuantity, onRemoveItem }: CartI
   };
 
   return (
-    <div className="flex items-center gap-3 py-3 border-b border-border last:border-b-0">
+    <div className="flex items-center gap-3 py-2 border-b border-border last:border-b-0">
       <div className="flex-grow">
         <h4 className="text-sm font-medium truncate">{item.name}</h4>
         <p className="text-xs text-muted-foreground">Rp {item.price.toLocaleString('id-ID')}</p>

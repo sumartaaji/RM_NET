@@ -294,7 +294,7 @@ export default function POSPage() {
         </div>
 
         <div className="lg:col-span-1 space-y-6 flex flex-col">
-            <div className="flex-grow min-h-[300px] lg:min-h-0"> 
+            <div className="min-h-[300px] lg:min-h-0"> 
               <Cart
                 cartItems={cartItems}
                 onUpdateQuantity={handleUpdateQuantity}

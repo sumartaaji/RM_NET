@@ -7,7 +7,7 @@ import { useAuth, type LoginResult } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { KeyRound, LogIn, ShieldAlert } from 'lucide-react';
+import { KeyRound, LogIn, ShieldAlert, Eye, EyeOff } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
 import { DEFAULT_PIN } from '@/lib/constants'; 
@@ -24,6 +24,7 @@ export default function LoginPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [pin, setPin] = useState('');
+  const [showPin, setShowPin] = useState(false);
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [lockoutMessage, setLockoutMessage] = useState('');
@@ -168,19 +169,31 @@ export default function LoginPage() {
         {!isEffectivelyLocked && (
           <form onSubmit={handleManualSubmit}>
             <CardContent className="space-y-4">
-              <Input
-                id="pin"
-                type="password" // Keep as password to hide digits
-                value={pin}
-                onChange={(e) => setPin(e.target.value.replace(/\D/g, ''))} // Allow only digits
-                maxLength={6} // Max 6 digits
-                placeholder="----"
-                className="text-center text-2xl tracking-[0.3em] font-mono h-14"
-                aria-label="PIN Input"
-                autoFocus
-                disabled={isEffectivelyLocked || isSubmitting}
-                autoComplete="one-time-code" // Helps password managers and improves accessibility for OTP-like fields
-              />
+              <div className="relative">
+                <Input
+                  id="pin"
+                  type={showPin ? "text" : "password"}
+                  value={pin}
+                  onChange={(e) => setPin(e.target.value.replace(/\D/g, ''))} // Allow only digits
+                  maxLength={6} // Max 6 digits
+                  placeholder="----"
+                  className="text-center text-2xl tracking-[0.3em] font-mono h-14 pr-12"
+                  aria-label="PIN Input"
+                  autoFocus
+                  disabled={isEffectivelyLocked || isSubmitting}
+                  autoComplete="one-time-code" // Helps password managers and improves accessibility for OTP-like fields
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="absolute right-1 top-1/2 -translate-y-1/2 h-12 w-12 text-muted-foreground hover:text-foreground"
+                  onClick={() => setShowPin(!showPin)}
+                  disabled={isEffectivelyLocked || isSubmitting}
+                >
+                  {showPin ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                </Button>
+              </div>
               {error && !lockoutMessage && <p className="text-sm text-destructive text-center">{error}</p>}
               <Button 
                 type="submit" 

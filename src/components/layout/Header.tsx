@@ -20,7 +20,7 @@ import { LOGO_STORAGE_KEY, THEME_KEY, DEFAULT_STORE_NAME } from '@/lib/constants
 import { useAuth } from '@/hooks/useAuth';
 import { useRouter } from 'next/navigation';
 
-const dailyMottos: string[] = [
+const dailyQuotes: string[] = [
   "Kesuksesan dimulai dari langkah kecil setiap hari.",
   "Jangan takut gagal, takutlah jika tidak pernah mencoba.",
   "Hari ini adalah kesempatan baru untuk menjadi lebih baik.",
@@ -41,8 +41,8 @@ export default function Header() {
   
   const [currentDate, setCurrentDate] = useState<string>('');
   const [currentTime, setCurrentTime] = useState<string>('');
-  const [currentMotto, setCurrentMotto] = useState<string>('');
-  const [mottoDate, setMottoDate] = useState<string | null>(null);
+  const [currentQuote, setCurrentQuote] = useState<string>('');
+  const [quoteDate, setQuoteDate] = useState<string | null>(null);
 
   const auth = useAuth();
   const router = useRouter();
@@ -127,47 +127,47 @@ export default function Header() {
         setCurrentTime(now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
       };
 
-      const updateMotto = () => {
+      const updateQuote = () => {
         const today = new Date().toLocaleDateString();
-        if (mottoDate !== today) {
-          const randomIndex = Math.floor(Math.random() * dailyMottos.length);
-          const newMotto = dailyMottos[randomIndex];
-          setCurrentMotto(newMotto);
-          setMottoDate(today);
+        if (quoteDate !== today) {
+          const randomIndex = Math.floor(Math.random() * dailyQuotes.length);
+          const newQuote = dailyQuotes[randomIndex];
+          setCurrentQuote(newQuote);
+          setQuoteDate(today);
           try {
-            localStorage.setItem('dailyMotto', newMotto);
-            localStorage.setItem('mottoDate', today);
+            localStorage.setItem('dailyQuote', newQuote);
+            localStorage.setItem('quoteDate', today);
           } catch (error) {
-            console.error("Error saving motto to localStorage:", error);
+            console.error("Error saving quote to localStorage:", error);
           }
         }
       };
       
       try {
-        const storedMotto = localStorage.getItem('dailyMotto');
-        const storedMottoDate = localStorage.getItem('mottoDate');
+        const storedQuote = localStorage.getItem('dailyQuote');
+        const storedQuoteDate = localStorage.getItem('quoteDate');
         const today = new Date().toLocaleDateString();
-
-        if (storedMotto && storedMottoDate === today) {
-          setCurrentMotto(storedMotto);
-          setMottoDate(storedMottoDate);
+ 
+        if (storedQuote && storedQuoteDate === today) {
+          setCurrentQuote(storedQuote);
+          setQuoteDate(storedQuoteDate);
         } else {
-          updateMotto();
+          updateQuote();
         }
       } catch (error) {
-        console.error("Error loading motto from localStorage:", error);
-        updateMotto(); 
+        console.error("Error loading quote from localStorage:", error);
+        updateQuote(); 
       }
       
       updateDateTime(); 
       const intervalId = setInterval(() => {
         updateDateTime();
-        updateMotto(); 
+        updateQuote(); 
       }, 1000); // Update every second for the clock
-
+ 
       return () => clearInterval(intervalId); 
     }
-  }, [mounted, mottoDate]);
+  }, [mounted, quoteDate]);
 
 
   const handleLogout = () => {
@@ -245,17 +245,20 @@ export default function Header() {
         </Link>
 
         {auth.isLoggedIn && (
-          <div className="hidden md:flex flex-grow flex-col items-center justify-center text-center overflow-visible px-2 min-w-0">
-            {currentMotto && (
-              <div className="flex items-center gap-1.5 text-sm text-foreground/80 italic" title={currentMotto}>
-                <Lightbulb className="h-4 w-4 text-yellow-500 shrink-0" />
-                <p className="text-center">{currentMotto}</p>
+          <div className="flex flex-grow flex-col items-center justify-center text-center px-1 md:px-2 min-w-0">
+            {currentQuote && (
+              <div 
+                className="hidden sm:flex items-center gap-1 md:gap-1.5 text-[10px] md:text-xs lg:text-sm text-foreground/80 italic cursor-help" 
+                title={currentQuote}
+              >
+                <Lightbulb className="h-3 w-3 md:h-3.5 md:w-3.5 text-yellow-500 shrink-0" />
+                <p className="truncate max-w-[100px] sm:max-w-[150px] md:max-w-xs lg:max-w-md">{currentQuote}</p>
               </div>
             )}
             {(currentDate || currentTime) && (
-              <div className="text-xs text-muted-foreground leading-tight">
-                {currentDate && <span>{currentDate}</span>}
-                {currentDate && currentTime && <span className="mx-1 opacity-50">|</span>}
+              <div className="text-[9px] md:text-xs text-muted-foreground leading-tight flex items-center justify-center gap-1">
+                {currentDate && <span className="hidden md:inline">{currentDate}</span>}
+                {currentDate && currentTime && <span className="hidden md:inline mx-1 opacity-50">|</span>}
                 {currentTime && <span className="font-medium text-primary/90">{currentTime}</span>}
               </div>
             )}

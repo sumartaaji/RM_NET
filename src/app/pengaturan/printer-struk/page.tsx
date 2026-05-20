@@ -40,7 +40,24 @@ export default function PengaturanPrinterStrukTransaksiPage() {
     try {
       const storedSettings = localStorage.getItem(PAYMENT_SETTINGS_STORAGE_KEY);
       if (storedSettings) {
-        setPaymentSettings(JSON.parse(storedSettings));
+        const parsed: PaymentSetting[] = JSON.parse(storedSettings);
+        // Merge missing defaults for existing users
+        const merged = [...parsed];
+        let hasNewDefaults = false;
+
+        DEFAULT_PAYMENT_SETTINGS.forEach(def => {
+          if (!merged.find(m => m.id === def.id)) {
+            merged.push(def);
+            hasNewDefaults = true;
+          }
+        });
+
+        if (hasNewDefaults) {
+          setPaymentSettings(merged);
+          localStorage.setItem(PAYMENT_SETTINGS_STORAGE_KEY, JSON.stringify(merged));
+        } else {
+          setPaymentSettings(parsed);
+        }
       } else {
         setPaymentSettings(DEFAULT_PAYMENT_SETTINGS);
         localStorage.setItem(PAYMENT_SETTINGS_STORAGE_KEY, JSON.stringify(DEFAULT_PAYMENT_SETTINGS));
